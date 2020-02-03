@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Feb  3 12:13:28 2020
+
+@author: becomp
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+dataset = pd.read_csv('acute_backache.csv')
+
+x = dataset.iloc[:, :1].values
+y = dataset.iloc[:, -1].values
+
+x_mean = np.mean(x)
+y_mean = np.mean(y)
+
+#Total Number of Values
+n = len(x)
+
+#using the formula to calculate b1 and b0
+numerator = 0
+denominator = 0
+for i in range(n):
+    numerator += (x[i] - x_mean) * (y[i] - y_mean)
+    denominator += (x[i] - x_mean) ** 2
+    
+b1 = numerator / denominator
+b0 = y_mean - (b1 * x_mean)
+
+#printing the coefficient
+print(b1, b0)
+
+#plotting values
+x_max = np.max(x) + 10
+x_min = np.min(x) - 10
+
+#calculating line values of x and y
+x_plot = np.linspace(x_min, x_max, 10)
+y_plot = b0 + b1 * x_plot
+
+#plotting line
+plt.plot(x_plot, y_plot, color='#00ff00', label='Linear Regression')
+         
+#plot the data point
+plt.scatter(x, y, color='#ff0000', label='Data Point')
+            
+#x-axis label
+plt.xlabel('Head Size   (cm^3)')
+
+#y-axis label
+plt.ylabel('Brain Weight   (grams)')
+
+plt.legend()
+plt.show()
+
+
+#Calculating root mean square error
+rmse = 0
+for i in range(n):
+    y_pred = b0 + b1 * x[i]
+    rmse += (y[i] - y_pred) ** 2
+
+rmse = np.sqrt(rmse/n)
+
+print(rmse)
+
+sumofsquares = 0
+sumofresiduals = 0
+
+for i in range(n) :
+    y_pred = b0 + b1 * x[i]
+    sumofsquares += (y[i] - y_mean) ** 2
+    sumofresiduals += (y[i] - y_pred) **2
+    
+score  = 1 - (sumofresiduals/sumofsquares)
+print(score)
